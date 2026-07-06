@@ -202,18 +202,26 @@
   /* ====== 여기만 상황에 맞게 바꾸세요 ====== */
   const CONFIG = {
     folder: "",     // 이미지가 이 HTML과 같은 폴더면 그대로 "". 다른 폴더면 "images/" 처럼
-    ext: "jpeg",    // 확장자
+    ext: "jpeg",    // 기본 확장자
+    // 예외: 이 상황들만 다른 확장자를 씁니다. { 상황이름: "확장자" }
+    extOverride: {
+      "솔의눈마심": "png",
+      "요리": "png",
+    },
   };
   /* ======================================== */
 
   const EUNSEONG = ["고독","고백받음","놀이공원","당황","독서","등교길지각","땀닦기","메롱","물마심","미소","버스","버스에서","버스에서졸다","부끄러움","비웃음","빡침","선생님심부름","수면","스마트폰","식사","쑥스러움","아이스크림먹기","아픔","양치","어색한사진찍기","어이없음","어쭈","외로움","운동","웃음","유저를놀림","유저머리쓰담쓰담","자전거","잠을자다","장보기","짜증","짜증남","칠판에씀","하교","하루와낮잠","하품","한교동을줌","한숨","화남","솔의눈마심","요리"];
   const HARU = ["갸웃","겁먹음","나무위에올라감","넘어짐","놀이","놀이공원","눈물","모래성쌓기","뿌듯함","삐짐","수면","술래잡기","식사","신남","아이스크림낼름","아픔","외침","울음","지렁이갖고장난","평상시"];
 
-  const build = (char, list) => list.map(sit => ({
-    char, sit,
-    full: char + "_" + sit,
-    src: CONFIG.folder + char + "_" + sit + "." + CONFIG.ext,
-  }));
+  const build = (char, list) => list.map(sit => {
+    const ext = CONFIG.extOverride[sit] || CONFIG.ext;
+    return {
+      char, sit, ext,
+      full: char + "_" + sit,
+      src: CONFIG.folder + char + "_" + sit + "." + ext,
+    };
+  });
   const items = [...build("백은성", EUNSEONG), ...build("하루", HARU)];
 
   document.getElementById("cnt-eun").textContent = EUNSEONG.length;
@@ -256,7 +264,7 @@
         const thumb = card.querySelector(".thumb");
         thumb.classList.add("missing");
         thumb.innerHTML = `<span class="${whoClass}">${it.char}</span>
-          <div class="mi">🖼️</div><span>이미지 없음<br>${it.full}.${CONFIG.ext}</span>`;
+          <div class="mi">🖼️</div><span>이미지 없음<br>${it.full}.${it.ext}</span>`;
       });
       grid.appendChild(card);
     });
